@@ -27,7 +27,11 @@
     "cors": "^2.8.4",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "express-validator": "^3.2.1",
     "mocha": "^5.2.0",
-    "mongoose": "^5.1.7"
+    "mongoose": "^5.1.7",
+    "parse-json": "^4.0.0",
+    "uuid": "^3.3.2",
+    "validator": "^8.0.0"
   }
 }
