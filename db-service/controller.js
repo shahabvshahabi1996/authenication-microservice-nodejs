@@ -1,24 +1,36 @@
 const User = require('./model');
 
-exports.registerUser = (info) => {
-    new User({
-        email : info.email,
-        name : info.name,
-        family : info.family,
-        password : info.password,
-        username : info.username
-    }).save((err,result) => {
-        if(err) 
-        return false;
+exports.registerUser = async (info) => {
 
-        else 
-        return true;
-    });
+    let user = await User.findOne({email : info.email});
+
+    if(user) {
+        return false;
+    }
+    else {
+        new User({
+            email : info.email,
+            name : info.name,
+            family : info.family,
+            password : info.password,
+            username : info.username
+        }).save((err,result) => {
+            if(err) {
+                console.log(err);
+            }
+            
+            return true;
+        });
+    }
+
 }
 
 exports.findUser = async (info) => {
-   const user =  User.findOne({email : info.email});
-   if(user) {
-       return user;
-   }
+    let user = await User.findOne({email : info.email , password : info.password});
+    if (user) {
+        
+        return user;
+    }
+
+    return false;
 }
