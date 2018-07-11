@@ -1,9 +1,9 @@
 const contorller = require('./contorller');
 module.exports = (app) => {
+    
     app.route('/').get(
         contorller.home
     );
-
 
     app.route('/signup').post(
         contorller.signupUser
@@ -17,6 +17,15 @@ module.exports = (app) => {
     )
     app.route('/login').get(
         contorller.loginPage
+    )
+
+    // test routes
+    app.route('/login.json').post(
+        contorller.LoginUserJSON
+    )
+
+    app.route('/signup.json').post(
+        contorller.signupUserJSON
     )
 
 }
