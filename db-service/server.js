@@ -9,13 +9,15 @@ require('dotenv').config()
 
 const bson = new BSON();
 
+let winston = require('./winston');
+
 amqp.connect(process.env.AMQP_HOST,(err,connection) => {
     connection.createChannel((err,channel) => {
         channel.assertQueue(process.env.AMQP_QUEUE,{durable : false});
-        console.log('listening to qeue!!!');
+        winston.logger.info('listening to queue!!!');
         channel.consume(process.env.AMQP_QUEUE,async (msg) => {
             let res = await Cluster(msg.content);
-            console.log("this is res %s",JSON.stringify(res));
+            winston.logger.info("this is res %s",JSON.stringify(res,undefined,4));
             channel.sendToQueue(msg.properties.replyTo,new Buffer(JSON.stringify(res)),{correlationId : msg.properties.correlationId});
         });
     })
@@ -51,7 +53,7 @@ const Cluster = async (name) => {
     }
     else {
         let res = await controller.findUser(parsed.data);
-        console.log(res);
+        winston.logger.debug(res);
         if (res) {
             let data = {
                 status : 'success',

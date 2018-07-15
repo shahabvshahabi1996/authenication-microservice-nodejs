@@ -1,5 +1,7 @@
 const User = require('./model');
 
+const winston = require('./winston');
+
 exports.registerUser = async (info) => {
 
     let user = await User.findOne({email : info.email});
@@ -16,7 +18,7 @@ exports.registerUser = async (info) => {
             username : info.username
         }).save((err,result) => {
             if(err) {
-                console.log(err);
+                winston.logger.error(err);
             }
             
             return true;
