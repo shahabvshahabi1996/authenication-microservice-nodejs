@@ -30,6 +30,7 @@
     "ejs": "2.6.1",
     "express": "4.16.3",
     "express-validator": "3.2.1",
+    "md5": "2.2.1",
     "mocha": "5.2.0",
     "nodemon": "1.17.5",
     "uuid": "3.3.2"
