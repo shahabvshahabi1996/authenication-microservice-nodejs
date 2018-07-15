@@ -3,6 +3,8 @@ const uuid = require('uuid/v1');
 const BSON = require('bson');
 const bson = new BSON();
 
+require('dotenv').config();
+
 let md5 = require('md5');
 
 exports.verifySignUpInfo = (req,res,next) => {
@@ -56,7 +58,7 @@ exports.makingHashFromPassword = (req,res,next) => {
 }
 
 exports.signupUser = (req,res) => {    
-        amqp.connect('amqp://localhost',(err,connection) => {
+        amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
@@ -67,7 +69,7 @@ exports.signupUser = (req,res) => {
                     let result = JSON.parse(msg.content.toString())
                     res.render('login.ejs',{message : result.message , type : 'success'});
                 },{noAck : true});
-                channel.sendToQueue('rpc_q',new Buffer(text),{correlationId : corID , replyTo : q.queue});
+                channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
                 setTimeout(()=>{ connection.close(); },500)
             });
         })
@@ -75,7 +77,7 @@ exports.signupUser = (req,res) => {
 }
 
 exports.loginUser = (req,res) => {
-    amqp.connect('amqp://localhost',(err,connection) => {
+    amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
@@ -89,7 +91,7 @@ exports.loginUser = (req,res) => {
                         res.render('profile.ejs',{ message : result.message , type : result.status , user : result.user });
                     }
                 },{noAck : true});
-                channel.sendToQueue('rpc_q',new Buffer(text),{correlationId : corID , replyTo : q.queue});
+                channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
                 setTimeout(()=>{ connection.close(); },500)
             });
         })
@@ -111,22 +113,7 @@ exports.loginPage = (req,res) => {
 
 // tests routes
 exports.LoginUserJSON = (req,res) => {
-    req.checkBody('email','plz enter a valid email address').isEmail();
-    req.checkBody('email','plz enter an email').notEmpty();
-    req.checkBody('password','plz enter a password').notEmpty();
-    req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
-
-    let errors = req.validationErrors();
-
-    if(errors) {
-        let msg = [];
-        errors.map((val,index) => {
-            msg.push(val.msg)
-        });
-        res.json({ message : msg , type : 'error'});
-        return ;
-    }
-    amqp.connect('amqp://localhost',(err,connection) => {
+    amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
@@ -139,7 +126,7 @@ exports.LoginUserJSON = (req,res) => {
                         type : result.status
                     })
                 },{noAck : true});
-                channel.sendToQueue('rpc_q',new Buffer(text),{correlationId : corID , replyTo : q.queue});
+                channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
                 setTimeout(()=>{ connection.close(); },500)
             });
         })
@@ -147,26 +134,7 @@ exports.LoginUserJSON = (req,res) => {
 }
 
 exports.signupUserJSON = (req, res) => {
-    req.checkBody('email','plz enter a valid email address').isEmail();
-        req.checkBody('email','plz enter an email').notEmpty();
-        req.checkBody('password','plz enter a password').notEmpty();
-        req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
-        req.checkBody('name','plz enter a name').notEmpty();
-        req.checkBody('family','plz enter a family').notEmpty();
-        req.checkBody('username','plz enter a username').notEmpty();
-
-        let errors = req.validationErrors();
-
-        if(errors) {
-            let msg = [];
-            errors.map((val,index) => {
-                msg.push(val.msg)
-            });
-            res.json({ message : msg , type : 'error'});        
-            return ;
-        }
-
-        amqp.connect('amqp://localhost',(err,connection) => {
+        amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
@@ -177,7 +145,7 @@ exports.signupUserJSON = (req, res) => {
                     let result = JSON.parse(msg.content.toString())
                     res.render({message : result.message , type : 'success'});
                 },{noAck : true});
-                channel.sendToQueue('rpc_q',new Buffer(text),{correlationId : corID , replyTo : q.queue});
+                channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
                 setTimeout(()=>{ connection.close(); },500)
             });
         })
