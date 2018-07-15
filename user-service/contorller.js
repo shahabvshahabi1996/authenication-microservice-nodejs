@@ -3,26 +3,59 @@ const uuid = require('uuid/v1');
 const BSON = require('bson');
 const bson = new BSON();
 
-exports.signupUser = (req,res) => {
-        req.checkBody('email','plz enter a valid email address').isEmail();
-        req.checkBody('email','plz enter an email').notEmpty();
-        req.checkBody('password','plz enter a password').notEmpty();
-        req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
-        req.checkBody('name','plz enter a name').notEmpty();
-        req.checkBody('family','plz enter a family').notEmpty();
-        req.checkBody('username','plz enter a username').notEmpty();
+let md5 = require('md5');
 
-        let errors = req.validationErrors();
+exports.verifySignUpInfo = (req,res,next) => {
+    req.checkBody('email','plz enter a valid email address').isEmail();
+    req.checkBody('email','plz enter an email').notEmpty();
+    req.checkBody('password','plz enter a password').notEmpty();
+    req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
+    req.checkBody('name','plz enter a name').notEmpty();
+    req.checkBody('family','plz enter a family').notEmpty();
+    req.checkBody('username','plz enter a username').notEmpty();
 
-        if(errors) {
-            let msg = [];
-            errors.map((val,index) => {
-                msg.push(val.msg)
-            });
-            res.render('signup.ejs',{ message : msg , type : 'error'});        
-            return ;
-        }
+    let errors = req.validationErrors();
 
+    if(errors) {
+        let msg = [];
+        errors.map((val,index) => {
+            msg.push(val.msg)
+        });
+        res.render('signup.ejs',{ message : msg , type : 'error'});        
+        return ;
+    }
+
+    next();
+}
+
+exports.verifyLoginInfo = (req,res,next) => {
+    req.checkBody('email','plz enter a valid email address').isEmail();
+    req.checkBody('email','plz enter an email').notEmpty();
+    req.checkBody('password','plz enter a password').notEmpty();
+    req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
+
+    let errors = req.validationErrors();
+
+    if(errors) {
+        let msg = [];
+        errors.map((val,index) => {
+            msg.push(val.msg)
+        });
+        res.render('login.ejs',{ message : msg , type : 'error'});
+        return ;
+    }
+
+    next();
+}
+
+exports.makingHashFromPassword = (req,res,next) => {
+    let hash = md5(req.body.password);
+    req.body.password = hash;
+
+    next();
+}
+
+exports.signupUser = (req,res) => {    
         amqp.connect('amqp://localhost',(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
@@ -42,21 +75,6 @@ exports.signupUser = (req,res) => {
 }
 
 exports.loginUser = (req,res) => {
-    req.checkBody('email','plz enter a valid email address').isEmail();
-    req.checkBody('email','plz enter an email').notEmpty();
-    req.checkBody('password','plz enter a password').notEmpty();
-    req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
-
-    let errors = req.validationErrors();
-
-    if(errors) {
-        let msg = [];
-        errors.map((val,index) => {
-            msg.push(val.msg)
-        });
-        res.render('login.ejs',{ message : msg , type : 'error'});
-        return ;
-    }
     amqp.connect('amqp://localhost',(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {

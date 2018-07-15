@@ -6,6 +6,8 @@ module.exports = (app) => {
     );
 
     app.route('/signup').post(
+        contorller.verifySignUpInfo,
+        contorller.makingHashFromPassword,
         contorller.signupUser
     )
     app.route('/signup').get(
@@ -13,6 +15,8 @@ module.exports = (app) => {
     )
 
     app.route('/login').post(
+        contorller.verifyLoginInfo,
+        contorller.makingHashFromPassword,
         contorller.loginUser       
     )
     app.route('/login').get(
@@ -21,10 +25,14 @@ module.exports = (app) => {
 
     // test routes
     app.route('/login.json').post(
+        contorller.verifyLoginInfo,
+        contorller.makingHashFromPassword,
         contorller.LoginUserJSON
     )
 
     app.route('/signup.json').post(
+        contorller.verifySignUpInfo,
+        contorller.makingHashFromPassword,
         contorller.signupUserJSON
     )
 
