@@ -5,13 +5,15 @@ const BSON = require('bson');
 const controller = require('./controller');
 require('./conection');
 
+require('dotenv').config()
+
 const bson = new BSON();
 
-amqp.connect('amqp://localhost',(err,connection) => {
+amqp.connect(process.env.AMQP_HOST,(err,connection) => {
     connection.createChannel((err,channel) => {
-        channel.assertQueue('rpc_q',{durable : false});
+        channel.assertQueue(process.env.AMQP_QUEUE,{durable : false});
         console.log('listening to qeue!!!');
-        channel.consume('rpc_q',async (msg) => {
+        channel.consume(process.env.AMQP_QUEUE,async (msg) => {
             let res = await Cluster(msg.content);
             console.log("this is res %s",JSON.stringify(res));
             channel.sendToQueue(msg.properties.replyTo,new Buffer(JSON.stringify(res)),{correlationId : msg.properties.correlationId});
