@@ -6,6 +6,7 @@ const bson = new BSON();
 require('dotenv').config();
 
 let md5 = require('md5');
+let winston = require('./winston');
 
 exports.verifySignUpInfo = (req,res,next) => {
     req.checkBody('email','plz enter a valid email address').isEmail();
@@ -62,10 +63,10 @@ exports.signupUser = (req,res) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
-                console.log(req.body);
+                winston.logger.debug("this is req body %s",req.body);
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
-                    console.log('massage recived : %s',msg.content.toString());
+                    winston.logger.info('massage recived : %s',msg.content.toString());
                     let result = JSON.parse(msg.content.toString())
                     res.render('login.ejs',{message : result.message , type : 'success'});
                 },{noAck : true});
@@ -83,7 +84,7 @@ exports.loginUser = (req,res) => {
                 const corID = uuid();
                 let text = bson.serialize({type : 'login',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
-                    console.log('massage recived : %s',msg.content.toString());
+                    winston.logger.info('massage recived : %s',msg.content.toString());
                     let result = JSON.parse(msg.content.toString())
                     if(result.status == 'error') {
                         res.render('login.ejs', { message : result.message , type : result.status });
@@ -119,7 +120,7 @@ exports.LoginUserJSON = (req,res) => {
                 const corID = uuid();
                 let text = bson.serialize({type : 'login',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
-                    console.log('massage recived : %s',msg.content.toString());
+                    winston.logger.info('massage recived : %s',msg.content.toString());
                     let result = JSON.parse(msg.content.toString())
                     res.json({
                         message : result.message,
@@ -138,10 +139,10 @@ exports.signupUserJSON = (req, res) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
-                console.log(req.body);
+                winston.logger.debug(req.body);
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
-                    console.log('massage recived : %s',msg.content.toString());
+                    winston.logger.info('massage recived : %s',msg.content.toString());
                     let result = JSON.parse(msg.content.toString())
                     res.render({message : result.message , type : 'success'});
                 },{noAck : true});
