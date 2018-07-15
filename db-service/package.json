@@ -23,18 +23,11 @@
   "homepage": "https://github.com/shahabvshahabi1996/authenication-microservice-nodejs#readme",
   "dependencies": {
     "amqplib": "^0.5.2",
-    "axios": "^0.18.0",
-    "body-parser": "^1.18.3",
     "bson": "^3.0.0",
-    "cors": "^2.8.4",
-    "ejs": "^2.6.1",
-    "express": "^4.16.3",
-    "express-validator": "^3.2.1",
     "mocha": "^5.2.0",
     "mongoose": "^5.1.7",
     "nodemon": "^1.17.5",
     "parse-json": "^4.0.0",
     "uuid": "^3.3.2",
-    "validator": "^8.0.0"
   }
 }

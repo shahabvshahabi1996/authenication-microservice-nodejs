@@ -1,7 +1,4 @@
-const express = require('express');
-const app = express();
 const amqp = require('amqplib/callback_api');
-const PORT = 8000 || process.env.PORT;
 const parseJson = require('parse-json');
 const BSON = require('bson');
 
