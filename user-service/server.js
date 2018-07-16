@@ -5,14 +5,17 @@ const app = express();
 const routes = require('./routes');
 const path = require('path');
 var expressValidator = require('express-validator');
-
+require('dotenv').config();
 app.use(cors());
 app.use(expressValidator());
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'views')));
-const PORT = 3000 || process.env.PORT;
+
+const PORT = process.env.PORT;
+
+console.log(process.env);
 
 routes(app);
 

@@ -63,7 +63,7 @@ exports.signupUser = (req,res) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
-                winston.logger.debug("this is req body %s",req.body);
+                winston.logger.debug("this is req body signup %s",req.body);
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
@@ -139,7 +139,7 @@ exports.signupUserJSON = (req, res) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
                 const corID = uuid();
-                winston.logger.debug(req.body);
+                winston.logger.debug("this is req body signupJSON %s",req.body);
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
