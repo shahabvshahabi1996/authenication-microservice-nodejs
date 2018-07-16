@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+
+  user-service:
+
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+
+    working_dir: /www/user-service/
+    
+    ports : 
+      - "3000:3000"
+    
+    depends_on:
+      - db-service  
+          
+    links:
+      - rabbitmq
+
+
+  db-service:
+
+    build :
+      context : ./db-service
+      dockerfile : Dockerfile
+
+    working_dir : /www/db-service
+    
+    depends_on:
+      - rabbitmq  
+            
+    links:
+      - rabbitmq
+
+  
+  rabbitmq:
+    image: rabbitmq:3.7.4
+
