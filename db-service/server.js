@@ -11,6 +11,8 @@ const bson = new BSON();
 
 let winston = require('./winston');
 
+console.log(process.env);
+
 amqp.connect(process.env.AMQP_HOST,(err,connection) => {
     connection.createChannel((err,channel) => {
         channel.assertQueue(process.env.AMQP_QUEUE,{durable : false});
