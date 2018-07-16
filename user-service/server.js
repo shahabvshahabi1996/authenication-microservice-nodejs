@@ -1,3 +1,4 @@
+let winston = require('./winston');
 let express = require('express');
 let bodyParser = require('body-parser');
 let cors = require('cors');
@@ -15,10 +16,8 @@ app.use(express.static(path.join(__dirname, 'views')));
 
 let PORT = process.env.PORT;
 
-console.log(process.env);
-
 routes(app);
 
 app.listen(PORT , () => {
-    console.log(`Waiting user-service for requestes on port : ${PORT}`)
+    winston.logger.info(`Waiting user-service for requestes on port : ${PORT}`)
 });

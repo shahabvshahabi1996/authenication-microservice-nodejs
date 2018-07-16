@@ -2,28 +2,33 @@ let User = require('./model');
 
 let winston = require('./winston');
 
-exports.registerUser = async (info) => {
+exports.registerUser = (info) => {
 
-    let user = await User.findOne({email : info.email});
+    User.findOne({email : info.email},(err,result) => {
+        if(err) {
+            winston.logger.error(err);
+        }
 
-    if(user) {
-        return false;
-    }
-    else {
-        new User({
-            email : info.email,
-            name : info.name,
-            family : info.family,
-            password : info.password,
-            username : info.username
-        }).save((err,result) => {
-            if(err) {
-                winston.logger.error(err);
-            }
-            
-            return true;
-        });
-    }
+        if(result) {
+            return false;
+        }
+
+        else {
+            new User({
+                email : info.email,
+                name : info.name,
+                family : info.family,
+                password : info.password,
+                username : info.username
+            }).save((err,result) => {
+                if(err) {
+                    winston.logger.error(err);
+                }
+                
+                return true;
+            });
+        }
+    });
 
 }
 
