@@ -1,13 +1,13 @@
-const amqp = require('amqplib/callback_api');
-const parseJson = require('parse-json');
-const BSON = require('bson');
+let amqp = require('amqplib/callback_api');
+let parseJson = require('parse-json');
+let BSON = require('bson');
 
-const controller = require('./controller');
+let controller = require('./controller');
 require('./conection');
 
 require('dotenv').config()
 
-const bson = new BSON();
+let bson = new BSON();
 
 let winston = require('./winston');
 
@@ -26,7 +26,7 @@ amqp.connect(process.env.AMQP_HOST,(err,connection) => {
 })
 
 
-const Cluster = async (name) => {
+let Cluster = async (name) => {
 
     let parsed = bson.deserialize(name, {
         promoteBuffers: true

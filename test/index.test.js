@@ -1,5 +1,5 @@
-const assert = require('assert');
-const axios = require('axios');
+let assert = require('assert');
+let axios = require('axios');
 
 describe('LOGIN POST and GET Requests',() => {
     it('should return false error when you send nothing',() => {

@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+let mongoose = require('mongoose');
 require('dotenv').config();
 
 let winston = require('./winston');
 
-const userinfo = {
+let userinfo = {
     name : process.env.DB_USER,
     password : process.env.DB_PASSWORD
 }

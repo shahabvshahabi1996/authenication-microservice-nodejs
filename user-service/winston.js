@@ -1,8 +1,8 @@
-const winston = require('winston');
+let winston = require('winston');
 
-const env = process.env.NODE_ENV || 'development';
+let env = process.env.NODE_ENV || 'development';
 
-const tsFormat = () => (new Date()).toLocaleTimeString();
+let tsFormat = () => (new Date()).toLocaleTimeString();
 exports.logger = new (winston.Logger)({
   transports: [
     // colorize the output to the console

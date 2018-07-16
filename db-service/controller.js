@@ -1,6 +1,6 @@
-const User = require('./model');
+let User = require('./model');
 
-const winston = require('./winston');
+let winston = require('./winston');
 
 exports.registerUser = async (info) => {
 

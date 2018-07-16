@@ -1,7 +1,7 @@
-const amqp = require('amqplib/callback_api');
-const uuid = require('uuid/v1');
-const BSON = require('bson');
-const bson = new BSON();
+let amqp = require('amqplib/callback_api');
+let uuid = require('uuid/v1');
+let BSON = require('bson');
+let bson = new BSON();
 
 require('dotenv').config();
 
@@ -12,7 +12,7 @@ exports.verifySignUpInfo = (req,res,next) => {
     req.checkBody('email','plz enter a valid email address').isEmail();
     req.checkBody('email','plz enter an email').notEmpty();
     req.checkBody('password','plz enter a password').notEmpty();
-    req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
+    req.checkBody('password','your paletsword must be 6 charecters minimum!').isLength({ min: 6 });
     req.checkBody('name','plz enter a name').notEmpty();
     req.checkBody('family','plz enter a family').notEmpty();
     req.checkBody('username','plz enter a username').notEmpty();
@@ -62,7 +62,7 @@ exports.signupUser = (req,res) => {
         amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
-                const corID = uuid();
+                let corID = uuid();
                 winston.logger.debug("this is req body signup %s",req.body);
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
@@ -81,7 +81,7 @@ exports.loginUser = (req,res) => {
     amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
-                const corID = uuid();
+                let corID = uuid();
                 let text = bson.serialize({type : 'login',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
@@ -117,7 +117,7 @@ exports.LoginUserJSON = (req,res) => {
     amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
-                const corID = uuid();
+                let corID = uuid();
                 let text = bson.serialize({type : 'login',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
@@ -138,7 +138,7 @@ exports.signupUserJSON = (req, res) => {
         amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         connection.createChannel((err,channel) => {
             channel.assertQueue('',{exclusive : true},(err,q) => {
-                const corID = uuid();
+                let corID = uuid();
                 winston.logger.debug("this is req body signupJSON %s",req.body);
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {

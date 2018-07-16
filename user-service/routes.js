@@ -1,4 +1,4 @@
-const contorller = require('./contorller');
+let contorller = require('./contorller');
 module.exports = (app) => {
     
     app.route('/').get(
