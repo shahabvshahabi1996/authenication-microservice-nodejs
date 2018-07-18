@@ -25,13 +25,13 @@ module.exports = (app) => {
 
     // test routes
     app.route('/login.json').post(
-        contorller.verifyLoginInfo,
+        contorller.verifyLoginInfoJSON,
         contorller.makingHashFromPassword,
         contorller.LoginUserJSON
     )
 
     app.route('/signup.json').post(
-        contorller.verifySignUpInfo,
+        contorller.verifySignUpInfoJSON,
         contorller.makingHashFromPassword,
         contorller.signupUserJSON
     )

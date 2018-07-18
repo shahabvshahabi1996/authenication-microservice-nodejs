@@ -68,10 +68,14 @@ exports.signupUser = (req,res) => {
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
                     let result = JSON.parse(msg.content.toString())
-                    res.render('login.ejs',{message : result.message , type : 'success'});
+                    if(result.status == 'error') {
+                        res.render('signup.ejs',{message : result.message , type : result.status});
+                    } else {
+                        res.render('login.ejs',{message : result.message , type : result.status});
+                    }
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },500)
+                setTimeout(()=>{ connection.close(); },2000)
             });
         })
     })
@@ -93,7 +97,7 @@ exports.loginUser = (req,res) => {
                     }
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },500)
+                setTimeout(()=>{ connection.close(); },2000)
             });
         })
     })
@@ -125,10 +129,10 @@ exports.LoginUserJSON = (req,res) => {
                     res.json({
                         message : result.message,
                         type : result.status
-                    })
+                    });
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },500)
+                setTimeout(()=>{ connection.close(); },2000)
             });
         })
     })
@@ -144,11 +148,54 @@ exports.signupUserJSON = (req, res) => {
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
                     let result = JSON.parse(msg.content.toString())
-                    res.render({message : result.message , type : 'success'});
+                    res.json({message : result.message,type : result.status});
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },500)
+                setTimeout(()=>{ connection.close(); },2000)
             });
         })
     })
 } 
+
+exports.verifySignUpInfoJSON = (req,res,next) => {
+    req.checkBody('email','plz enter a valid email address').isEmail();
+    req.checkBody('email','plz enter an email').notEmpty();
+    req.checkBody('password','plz enter a password').notEmpty();
+    req.checkBody('password','your paletsword must be 6 charecters minimum!').isLength({ min: 6 });
+    req.checkBody('name','plz enter a name').notEmpty();
+    req.checkBody('family','plz enter a family').notEmpty();
+    req.checkBody('username','plz enter a username').notEmpty();
+
+    let errors = req.validationErrors();
+
+    if(errors) {
+        let msg = [];
+        errors.map((val,index) => {
+            msg.push(val.msg)
+        });
+        res.json({ message : msg , type : 'error'});        
+        return ;
+    }
+
+    next();
+}
+
+exports.verifyLoginInfoJSON = (req,res,next) => {
+    req.checkBody('email','plz enter a valid email address').isEmail();
+    req.checkBody('email','plz enter an email').notEmpty();
+    req.checkBody('password','plz enter a password').notEmpty();
+    req.checkBody('password','your password must be 6 charecters minimum!').isLength({ min: 6 });
+
+    let errors = req.validationErrors();
+
+    if(errors) {
+        let msg = [];
+        errors.map((val,index) => {
+            msg.push(val.msg)
+        });
+        res.json({ message : msg , type : 'error'});
+        return ;
+    }
+
+    next();
+}
