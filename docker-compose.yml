@@ -16,8 +16,8 @@ services:
     depends_on:
       - db-service  
           
-    links:
-      - rabbitmq
+    # links:
+    #   - rabbitmq
 
 
   db-service:
@@ -31,8 +31,8 @@ services:
     depends_on:
       - rabbitmq  
             
-    links:
-      - rabbitmq
+    # links:
+    #   - rabbitmq
 
   
   rabbitmq:
