@@ -17,7 +17,7 @@ amqp.connect(process.env.AMQP_HOST,(err,connection) => {
         winston.logger.info('listening to queue!!!');
         channel.consume(process.env.AMQP_QUEUE,async (msg) => {
             let res = await Cluster(msg.content);
-            winston.logger.info("this is res %s",JSON.stringify(res,undefined,4));
+            winston.logger.info("Ive got res %s",JSON.stringify(res,undefined,4));
             channel.sendToQueue(msg.properties.replyTo,new Buffer(JSON.stringify(res)),{correlationId : msg.properties.correlationId});
         });
     })
@@ -30,9 +30,9 @@ let Cluster = async (name) => {
         promoteBuffers: true
     });
     if(parsed.type == 'signup') {
-        let res = controller.registerUser(parsed.data);
-
-        if(res) {
+        let res = await controller.registerUser(parsed.data);
+        console.log('this is my result from saving a user %s' , res);
+        if(res || undefined) {
             let data = {
                 status : 'success',
                 message : 'you have successfully signed up!'
