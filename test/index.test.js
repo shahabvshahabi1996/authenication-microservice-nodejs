@@ -1,87 +1,142 @@
 let assert = require('assert');
 let axios = require('axios');
+let sinon = require('sinon');
+let randomEmail = require('random-email');
+// let mongoose = require('mongoose');
+let User = require('../db-service/model');
 
-describe('LOGIN POST and GET Requests',() => {
-    it('should return false error when you send nothing',() => {
-        axios.post('http://localhost:3000/login.json',{
-            email : '',
-            password : ''
-        }).then((response) => {
-            // console.log(response.data)
-            assert.equal(response.data.type , 'error');
-        }).catch(e => {
-            assert(e);
-        })
-    })
+describe('Routes Requests' , () => {
 
-    it('should return false error when you sending wrong info' , () => {
-        axios.post('http://localhost:3000/login.json',{
-                email : 'test@test123.com',
-                password : '123456'
-            }).then((response) => {
-                // console.log(response.data)
-                assert.equal(response.data.type , 'error');
+    describe('Login POST Requests' , () => {
+        it('should return undefined when there is no connection',() => {
+            axios.get('http://loclhost:3000/login.json')
+            .then((response) => { 
+                assert.equal(response.status,200);
             }).catch(e => {
-                assert(e);
-        })  
-    })
+                assert.equal(e.status,undefined);
+            });
+        });
 
-    it('should return true when you send user email and password info',() => {
-        axios.post('http://localhost:3000/login.json',{
-                email : 'test@test123.com',
-                password : '123456'
-        }).then((response) => {
-            // console.log(response.data)
-            assert.equal(response.data.type , 'success');
-        }).catch(e => {
-            assert(e);
-        })
-    })
-})
+        it('should return error when there is no data' , (done) => {
+            axios.post('http://localhost:3000/login.json',{
+                email : '',
+                password : ''
+            }).then(response => {
+                assert.equal(response.status,200);
+                assert.equal(response.data.type,'error');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        });
 
-describe('SIGNUP POST and GET Requests',() => {
-    it('should return false error when you send nothing',() => {
-        axios.post('http://localhost:3000/signup.json',{
-            email : '',
-            password : '',
-            name : '',
-            family : '',
-            username : ''
-        }).then((response) => {
-            // console.log(response.data)
-            assert.equal(response.data.type , 'error');
-        }).catch(e => {
-            assert(e);
-        })
-    })
+        it('should return false when we send wrong data' , (done) => {
+            axios.post('http://localhost:3000/login.json',{
+                email : 'mock@test.com',
+                password : 'mockpass'
+            }).then(response => {
+                assert.equal(response.status,200);
+                assert.equal(response.data.type,'error');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        });
 
-    it('should return false error when you sending wrong info' , () => {
-        axios.post('http://localhost:3000/signup.json',{
-                email : 'test123',
-                password : '12356',
-                name : 'asd',
-                family : 'asdasdas',
-                username : 'asdsaasd'
-            }).then((response) => {
-                // console.log(response.data)
-                assert.equal(response.data.type , 'error');
-            }).catch(e => {
-                assert(e);
-        })  
-    })
+        it('should return true when we send right data',(done) => {
+            axios.post('http://localhost:3000/login.json',{
+                email : 'shahab@cheshmak.me',
+                password : 'shahab1996'
+            }).then(response => {
+                assert.equal(response.status,200);
+                assert.equal(response.data.type,'success');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        });
+    });
 
-    it('should return true when you send right info',() => {
-        axios.post('http://localhost:3000/signup.json',{
-                email : 'test@test123.com',
+    describe('Signup POST Requests',() => {
+        // let count ;
+        let data;
+        before('connection',() => {
+           data = {
+                email : randomEmail(),
                 password : '123456',
-                name : 'test',
-                family : 'test',
-                username : 'test@test'
-        }).then((response) => {
-            // console.log(response.data)
-            assert.equal(response.data.type , 'success');
+                name : 'mock',
+                family : 'mockmanesh',
+                username : randomEmail() + randomEmail() 
+           }
+        });
+
+        it('should save a new user without error', (done) => {
+            axios.post('http://localhost:3000/signup.json',data).then(async(response) => {
+                assert.equal(response.data.type,'success')
+                assert.equal(response.data.message , 'you have successfully signed up!');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        });
+
+        it('should return error if we send none to api', (done) => {
+            axios.post('http://localhost:3000/signup.json',{}).then(async(response) => {
+                assert.equal(response.data.type,'error')
+                // assert.equal(response.data.message , 'you have successfully signed up!');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        });
+
+        it('should return error if we send wrong info to API', (done) => {
+            axios.post('http://localhost:3000/signup.json',{
+                email : '',
+                password : '',
+                name : '',
+                family : "",
+                username : ''
+            }).then(async(response) => {
+                assert.equal(response.data.type,'error')
+                // assert.equal(response.data.message , 'you have successfully signed up!');
+                done();
+            }).catch((e) => {
+                done(e);
+            });
+        });
+    });
+
+});
+
+describe('mongodb requests' , () => {
+    let data;
+    before('connection',() => {
+        data = {
+            email : randomEmail(),
+            password : '123456',
+            name : 'mock',
+            family : 'mockmanesh',
+            username : randomEmail() + randomEmail() 
+        }
+    });
+
+    it('should save a user without any error', (done) => {
+        let user = new User(data);
+
+        user.save().then((res) => {
+            assert(res);
+            done();
         }).catch(e => {
-            assert(e);
-        })
+            done(e);
+        })         
+    });
+
+    it('should find a user without any errors' , (done) => {
+        User.findOne({email : data.email , password : data.password}).then((res) => {
+            assert(res);
+        }).catch(e => {
+            done(e);
+        });
     })
-})
+});
