@@ -62,4 +62,4 @@ typings/
 
 db-service.log
 
-.env
+server/.env
