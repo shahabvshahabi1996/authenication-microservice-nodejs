@@ -6,7 +6,8 @@ let winston = require('./winston');
 let userinfo = {
     name : process.env.DB_USER,
     password : process.env.DB_PASSWORD
-}
+};
+
 mongoose.connect(`mongodb://${userinfo.name}:${userinfo.password}@ds239127.mlab.com:39127/test_db`); //link
 
 mongoose.connection.on('open',() => {

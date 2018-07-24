@@ -5,7 +5,7 @@ let cors = require('cors');
 let app = express();
 let routes = require('./routes');
 let path = require('path');
-var expressValidator = require('express-validator');
+let expressValidator = require('express-validator');
 require('dotenv').config();
 app.use(cors());
 app.use(expressValidator());
@@ -19,5 +19,5 @@ let PORT = process.env.PORT;
 routes(app);
 
 app.listen(PORT , () => {
-    winston.logger.info(`Waiting user-service for requestes on port : ${PORT}`)
+    winston.logger.info(`Waiting user-service for requestes on port : ${PORT}`);
 });

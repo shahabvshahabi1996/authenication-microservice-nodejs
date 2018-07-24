@@ -17,12 +17,12 @@ let saveUser = async (info) => {
             else {
                 resolve(result);
             }
-        })
+        });
     }).then(res => {
         return true
     }).catch(e => {
         return false;
-    })
+    });
 
     return output;
 }

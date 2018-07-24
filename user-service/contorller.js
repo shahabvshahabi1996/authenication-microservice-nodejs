@@ -22,7 +22,7 @@ exports.verifySignUpInfo = (req,res,next) => {
     if(errors) {
         let msg = [];
         errors.map((val,index) => {
-            msg.push(val.msg)
+            msg.push(val.msg);
         });
         res.render('signup.ejs',{ message : msg , type : 'error'});        
         return ;
@@ -42,7 +42,7 @@ exports.verifyLoginInfo = (req,res,next) => {
     if(errors) {
         let msg = [];
         errors.map((val,index) => {
-            msg.push(val.msg)
+            msg.push(val.msg);
         });
         res.render('login.ejs',{ message : msg , type : 'error'});
         return ;
@@ -67,18 +67,18 @@ exports.signupUser = (req,res) => {
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
-                    let result = JSON.parse(msg.content.toString())
-                    if(result.status == 'error') {
+                    let result = JSON.parse(msg.content.toString());
+                    if(result.status === 'error') {
                         res.render('signup.ejs',{message : result.message , type : result.status});
                     } else {
                         res.render('login.ejs',{message : result.message , type : result.status});
                     }
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },2000)
+                setTimeout(()=>{ connection.close(); },2000);
             });
-        })
-    })
+        });
+    });
 }
 
 exports.loginUser = (req,res) => {
@@ -89,18 +89,18 @@ exports.loginUser = (req,res) => {
                 let text = bson.serialize({type : 'login',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
-                    let result = JSON.parse(msg.content.toString())
-                    if(result.status == 'error') {
+                    let result = JSON.parse(msg.content.toString());
+                    if(result.status === 'error') {
                         res.render('login.ejs', { message : result.message , type : result.status });
                     } else {
                         res.render('profile.ejs',{ message : result.message , type : result.status , user : result.user });
                     }
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },2000)
+                setTimeout(()=>{ connection.close(); },2000);
             });
-        })
-    })
+        });
+    });
 }
 
 exports.home = (req,res) => {
@@ -125,17 +125,17 @@ exports.LoginUserJSON = (req,res) => {
                 let text = bson.serialize({type : 'login',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
-                    let result = JSON.parse(msg.content.toString())
+                    let result = JSON.parse(msg.content.toString());
                     res.json({
                         message : result.message,
                         type : result.status
                     });
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },2000)
+                setTimeout(()=>{ connection.close(); },2000);
             });
-        })
-    })
+        });
+    });
 }
 
 exports.signupUserJSON = (req, res) => {
@@ -147,14 +147,14 @@ exports.signupUserJSON = (req, res) => {
                 let text = bson.serialize({type : 'signup',data : req.body},undefined,true);
                 channel.consume(q.queue,(msg) => {
                     winston.logger.info('massage recived : %s',msg.content.toString());
-                    let result = JSON.parse(msg.content.toString())
+                    let result = JSON.parse(msg.content.toString());
                     res.json({message : result.message,type : result.status});
                 },{noAck : true});
                 channel.sendToQueue(process.env.AMQP_QUEUE,new Buffer(text),{correlationId : corID , replyTo : q.queue});
-                setTimeout(()=>{ connection.close(); },2000)
+                setTimeout(()=>{ connection.close(); },2000);
             });
-        })
-    })
+        });
+    });
 } 
 
 exports.verifySignUpInfoJSON = (req,res,next) => {
@@ -171,7 +171,7 @@ exports.verifySignUpInfoJSON = (req,res,next) => {
     if(errors) {
         let msg = [];
         errors.map((val,index) => {
-            msg.push(val.msg)
+            msg.push(val.msg);
         });
         res.json({ message : msg , type : 'error'});        
         return ;
@@ -191,7 +191,7 @@ exports.verifyLoginInfoJSON = (req,res,next) => {
     if(errors) {
         let msg = [];
         errors.map((val,index) => {
-            msg.push(val.msg)
+            msg.push(val.msg);
         });
         res.json({ message : msg , type : 'error'});
         return ;
